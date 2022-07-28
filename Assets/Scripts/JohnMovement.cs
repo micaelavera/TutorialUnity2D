@@ -7,11 +7,12 @@ public class JohnMovement : MonoBehaviour
     private Rigidbody2D rigidbody2D;
     private Animator animator;
     private float horizontal;
-    private bool grounded;
+    private bool isGrounded;
     
     public float speed;
     public float jumpForce;
 
+    public GameObject BulletPrefab;
     void Start()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
@@ -29,15 +30,21 @@ public class JohnMovement : MonoBehaviour
        animator.SetBool("running", horizontal != 0.0f);
 
        // Debug.DrawRay(transform.position, Vector3.down * 0.1f, Color.red);
+
        if (Physics2D.Raycast(transform.position, Vector3.down, 0.1f))
        {
-           grounded = true;
+           isGrounded = true;
        }
-       else grounded = false;
+       else isGrounded = false;
        
-       if (Input.GetKeyDown(KeyCode.W) && grounded)
+       if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
        {
            Jump();
+       }
+
+       if (Input.GetKey(KeyCode.Space))
+       {
+           Shoot();
        }
     }
 
@@ -45,9 +52,20 @@ public class JohnMovement : MonoBehaviour
     {
         rigidbody2D.AddForce(Vector2.up * jumpForce);
     }
+
+    private void Shoot()
+    {
+        Vector3 direction;
+        if (transform.localScale.x == 1.0f) direction = Vector3.right;
+        else direction = Vector3.left;
+        //Quaternion.identity -> rotacion 0
+        // transform.position -> centro del player John + offset
+        GameObject bullet = Instantiate(BulletPrefab, transform.position + direction * 0.1f, Quaternion.identity);
+        bullet.GetComponent<BulletScript>().SetDirection(direction);
+    }
     
     private void FixedUpdate()
     {
-        rigidbody2D.velocity = new Vector2(horizontal, rigidbody2D.velocity.y);
+        rigidbody2D.velocity = new Vector2(horizontal * speed, rigidbody2D.velocity.y);
     }
 }
