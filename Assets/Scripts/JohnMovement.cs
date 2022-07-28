@@ -8,6 +8,7 @@ public class JohnMovement : MonoBehaviour
     private Animator animator;
     private float horizontal;
     private bool isGrounded;
+    private float lastShoot;
     
     public float speed;
     public float jumpForce;
@@ -18,7 +19,6 @@ public class JohnMovement : MonoBehaviour
         rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
     }
-
 
     void Update()
     {
@@ -42,9 +42,10 @@ public class JohnMovement : MonoBehaviour
            Jump();
        }
 
-       if (Input.GetKey(KeyCode.Space))
+       if (Input.GetKey(KeyCode.Space) && Time.time > lastShoot + 0.25f)
        {
            Shoot();
+           lastShoot = Time.time;
        }
     }
 
@@ -58,12 +59,13 @@ public class JohnMovement : MonoBehaviour
         Vector3 direction;
         if (transform.localScale.x == 1.0f) direction = Vector3.right;
         else direction = Vector3.left;
+
         //Quaternion.identity -> rotacion 0
         // transform.position -> centro del player John + offset
         GameObject bullet = Instantiate(BulletPrefab, transform.position + direction * 0.1f, Quaternion.identity);
         bullet.GetComponent<BulletScript>().SetDirection(direction);
     }
-    
+      
     private void FixedUpdate()
     {
         rigidbody2D.velocity = new Vector2(horizontal * speed, rigidbody2D.velocity.y);
