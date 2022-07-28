@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class JohnMovement : MonoBehaviour
 {
-    private Rigidbody2D rigidbody2D;
+    private Rigidbody2D Rigidbody2D;
     private Animator animator;
     private float horizontal;
     private bool isGrounded;
     private float lastShoot;
+    private int health = 5;
     
     public float speed;
     public float jumpForce;
@@ -16,7 +17,7 @@ public class JohnMovement : MonoBehaviour
     public GameObject BulletPrefab;
     void Start()
     {
-        rigidbody2D = GetComponent<Rigidbody2D>();
+        Rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
     }
 
@@ -51,7 +52,7 @@ public class JohnMovement : MonoBehaviour
 
     private void Jump()
     {
-        rigidbody2D.AddForce(Vector2.up * jumpForce);
+        GetComponent<Rigidbody2D>().AddForce(Vector2.up * jumpForce);
     }
 
     private void Shoot()
@@ -68,6 +69,13 @@ public class JohnMovement : MonoBehaviour
       
     private void FixedUpdate()
     {
-        rigidbody2D.velocity = new Vector2(horizontal * speed, rigidbody2D.velocity.y);
+        Rigidbody2D.velocity = new Vector2(horizontal * speed, GetComponent<Rigidbody2D>().velocity.y);
+    }
+
+    public void Hit()
+    {   
+        Debug.Log(health);
+        health = health - 1;
+        if (health == 0) Destroy(gameObject);
     }
 }
