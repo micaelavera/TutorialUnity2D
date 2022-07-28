@@ -5,6 +5,7 @@ using UnityEngine;
 public class JohnMovement : MonoBehaviour
 {
     private Rigidbody2D rigidbody2D;
+    private Animator animator;
     private float horizontal;
     private bool grounded;
     
@@ -14,13 +15,20 @@ public class JohnMovement : MonoBehaviour
     void Start()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
 
     void Update()
     {
        horizontal = Input.GetAxisRaw("Horizontal");
-       Debug.DrawRay(transform.position, Vector3.down * 0.1f, Color.red);
+
+       if (horizontal < 0.0f) transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
+       else if (horizontal > 0.0f) transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+
+       animator.SetBool("running", horizontal != 0.0f);
+
+       // Debug.DrawRay(transform.position, Vector3.down * 0.1f, Color.red);
        if (Physics2D.Raycast(transform.position, Vector3.down, 0.1f))
        {
            grounded = true;
